@@ -5,7 +5,7 @@ const Mailer = require('../services/Mailer');
 const Survey = mongoose.model('surveys');
 const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 
-module.export = app => {
+module.exports = app => {
   app.post('/api/surveys', requireLogin, requireCredits, (req, res) => {
     const { title, subject, body, recipients } = req.body;
 
@@ -20,6 +20,7 @@ module.export = app => {
 
     //send email through sendgrid helper mailer class
     const mailer = new Mailer(survey, surveyTemplate(survey));
+    mailer.send();
 
   });
 };
