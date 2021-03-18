@@ -6,6 +6,14 @@ const Survey = mongoose.model('surveys');
 const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 
 module.exports = app => {
+
+  app.get('/api/surveys/feedback', (req, res) => {
+
+    res.send('Thanks for the feedback!');
+  });
+
+
+
   app.post('/api/surveys', requireLogin, requireCredits, async (req, res) => {
     const { title, subject, body, recipients } = req.body;
 
@@ -20,12 +28,12 @@ module.exports = app => {
 
     //send email through sendgrid helper mailer class
     const mailer = new Mailer(survey, surveyTemplate(survey));
-    
+
     try {
-      await mailer.send();
-      await survey.save();
-      req.user.credits -= 1;
-      const user = await req.user.save();
+      await mailer.send(); //send email
+      await survey.save(); //save survey to db
+      req.user.credits -= 1; // update user credits
+      const user = await req.user.save(); //save updated user
 
       res.send(user);
     } catch (err) {
